@@ -5,24 +5,27 @@ const dns = require('dns');
 const path = require('path');
 require('dotenv').config();
 
-// Force Node.js to use Google DNS for SRV lookups (fixes ECONNREFUSED on some networks)
+// Force Node.js to use Google DNS for SRV lookups
 dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 
 const app = express();
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
-  credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// Routes
+// API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
+
+// Error handling middleware (must be before static fallback)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: err.message || 'Server Error' });
+});
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
@@ -31,12 +34,6 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
   });
 }
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: err.message || 'Server Error' });
-});
 
 const PORT = process.env.PORT || 5000;
 
