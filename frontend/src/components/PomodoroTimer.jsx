@@ -45,10 +45,10 @@ export default function PomodoroTimer({ taskTitle, onClose }) {
       <div className="glass-card p-8 w-full max-w-sm animate-scale-in">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Timer size={18} className="text-violet-400" />
-            <span className="text-white font-bold">Pomodoro</span>
+            <Timer size={18} className="text-violet-500" />
+            <span className="text-gray-900 dark:text-white font-bold">Pomodoro</span>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
             <X size={15} />
           </button>
         </div>
@@ -56,15 +56,15 @@ export default function PomodoroTimer({ taskTitle, onClose }) {
         {taskTitle && (
           <div className="text-center mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Working on</p>
-            <p className="text-white font-semibold text-sm truncate">{taskTitle}</p>
+            <p className="text-gray-900 dark:text-white font-semibold text-sm truncate">{taskTitle}</p>
           </div>
         )}
 
         {/* Mode tabs */}
-        <div className="flex bg-white/5 rounded-xl p-1 mb-8 gap-1">
+        <div className="flex bg-gray-100 dark:bg-white/5 rounded-xl p-1 mb-8 gap-1">
           {Object.keys(MODES).map(m => (
             <button key={m} onClick={() => switchMode(m)}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${mode === m ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-gray-300'}`}>
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${mode === m ? 'bg-white dark:bg-white/10 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
               {MODE_LABELS[m]}
             </button>
           ))}
@@ -80,7 +80,7 @@ export default function PomodoroTimer({ taskTitle, onClose }) {
                 style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.3s' }} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-black text-white tabular-nums">{fmt(seconds)}</span>
+              <span className="text-4xl font-black text-gray-900 dark:text-white tabular-nums">{fmt(seconds)}</span>
               <span className="text-xs text-gray-500 mt-1">{MODE_LABELS[mode]}</span>
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function PomodoroTimer({ taskTitle, onClose }) {
 
         {/* Controls */}
         <div className="flex items-center justify-center gap-4 mb-6">
-          <button onClick={reset} className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all">
+          <button onClick={reset} className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all">
             <RotateCcw size={16} />
           </button>
           <button onClick={() => setRunning(r => !r)}
@@ -96,8 +96,8 @@ export default function PomodoroTimer({ taskTitle, onClose }) {
             style={{ background: `linear-gradient(135deg, ${color}, ${color}99)`, boxShadow: `0 8px 24px ${color}40` }}>
             {running ? <Pause size={22} /> : <Play size={22} className="ml-0.5" />}
           </button>
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-            <span className="text-xs font-bold text-gray-400">{sessions}🍅</span>
+          <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+            <span className="text-xs font-bold text-gray-600 dark:text-gray-400">{sessions}🍅</span>
           </div>
         </div>
 

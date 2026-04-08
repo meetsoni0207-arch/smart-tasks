@@ -52,7 +52,7 @@ export default function TaskModal({ task, onClose, onSave }) {
             </div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">{task ? 'Edit Task' : 'New Task'}</h2>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-all">
+          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all">
             <X size={16} />
           </button>
         </div>
@@ -80,10 +80,10 @@ export default function TaskModal({ task, onClose, onSave }) {
                 <button key={value} type="button" onClick={() => setForm({ ...form, priority: value })}
                   className={`p-3 rounded-xl border text-left transition-all duration-200 ${
                     form.priority === value
-                      ? 'border-violet-500/50 bg-violet-500/10'
-                      : 'border-white/5 bg-white/3 hover:bg-white/5'
+                      ? 'border-violet-500/50 bg-violet-50 dark:bg-violet-500/10'
+                      : 'border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10'
                   }`}>
-                  <div className="text-sm font-semibold text-white mb-0.5">{label}</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">{label}</div>
                   <div className="text-xs text-gray-500">{desc}</div>
                 </button>
               ))}

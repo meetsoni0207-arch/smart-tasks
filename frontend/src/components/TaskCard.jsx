@@ -48,10 +48,10 @@ export default function TaskCard({ task, viewMode, onEdit, onDelete, onToggle, o
           <button onClick={() => onPomodoro(task)} className="w-8 h-8 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 flex items-center justify-center text-violet-400 transition-colors" title="Start Pomodoro">
             <Timer size={14} />
           </button>
-          <button onClick={() => onEdit(task)} className="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+          <button onClick={() => onEdit(task)} className="w-8 h-8 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
             <Pencil size={14} />
           </button>
-          <button onClick={() => onDelete(task._id)} className="w-8 h-8 rounded-lg hover:bg-red-500/10 flex items-center justify-center text-gray-500 hover:text-red-400 transition-colors">
+          <button onClick={() => onDelete(task._id)} className="w-8 h-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
             <Trash2 size={14} />
           </button>
         </div>
@@ -71,18 +71,18 @@ export default function TaskCard({ task, viewMode, onEdit, onDelete, onToggle, o
           {isOverdue && <span className="badge bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20">Overdue</span>}
         </div>
         <div className="relative">
-          <button onClick={() => setMenuOpen(m => !m)} className="w-7 h-7 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-all">
+          <button onClick={() => setMenuOpen(m => !m)} className="w-7 h-7 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 dark:hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white transition-all">
             <MoreVertical size={14} />
           </button>
           {menuOpen && (
             <div className="absolute right-0 top-8 glass-card py-1 w-36 z-20 animate-scale-in" onMouseLeave={() => setMenuOpen(false)}>
-              <button onClick={() => { onPomodoro(task); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
-                <Timer size={13} className="text-violet-400" /> Pomodoro
+              <button onClick={() => { onPomodoro(task); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 flex items-center gap-2 transition-colors">
+                <Timer size={13} className="text-violet-500" /> Pomodoro
               </button>
-              <button onClick={() => { onEdit(task); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
-                <Pencil size={13} className="text-blue-400" /> Edit
+              <button onClick={() => { onEdit(task); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 flex items-center gap-2 transition-colors">
+                <Pencil size={13} className="text-blue-500" /> Edit
               </button>
-              <button onClick={() => { onDelete(task._id); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 flex items-center gap-2 transition-colors">
+              <button onClick={() => { onDelete(task._id); setMenuOpen(false); }} className="w-full px-3 py-2 text-left text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/5 flex items-center gap-2 transition-colors">
                 <Trash2 size={13} /> Delete
               </button>
             </div>

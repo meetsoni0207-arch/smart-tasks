@@ -145,8 +145,8 @@ export default function Dashboard() {
             <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-violet-500/30">
               <Zap size={15} className="text-white" />
             </div>
-            <span className="font-black text-white tracking-tight">TaskFlow</span>
-            <span className="hidden sm:block text-xs bg-violet-500/15 text-violet-400 border border-violet-500/20 px-2 py-0.5 rounded-full font-semibold">PRO</span>
+            <span className="font-black text-gray-900 dark:text-white tracking-tight">TaskFlow</span>
+            <span className="hidden sm:block text-xs bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-500/30 px-2 py-0.5 rounded-full font-semibold">PRO</span>
           </div>
 
           <div className="flex items-center gap-2">
