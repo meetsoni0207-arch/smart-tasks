@@ -50,7 +50,7 @@ export default function TaskModal({ task, onClose, onSave }) {
             <div className="w-8 h-8 bg-violet-500/20 rounded-lg flex items-center justify-center">
               <Sparkles size={15} className="text-violet-400" />
             </div>
-            <h2 className="text-lg font-bold text-white">{task ? 'Edit Task' : 'New Task'}</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">{task ? 'Edit Task' : 'New Task'}</h2>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-all">
             <X size={16} />
@@ -96,6 +96,7 @@ export default function TaskModal({ task, onClose, onSave }) {
               <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Status</label>
               <select className="input" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
                 <option value="pending">⏳ Pending</option>
+                <option value="in-progress">🔵 In Progress</option>
                 <option value="completed">✅ Completed</option>
               </select>
             </div>

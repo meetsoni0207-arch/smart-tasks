@@ -11,21 +11,31 @@ export default function TaskCard({ task, viewMode, onEdit, onDelete, onToggle, o
   const [menuOpen, setMenuOpen] = useState(false);
   const p = priorityConfig[task.priority] || priorityConfig.medium;
   const isCompleted = task.status === 'completed';
+  const isInProgress = task.status === 'in-progress';
   const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !isCompleted;
   const formatDate = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
+  const statusBadge = isCompleted
+    ? <span className="status-completed">✅ Done</span>
+    : isInProgress
+    ? <span className="status-inprogress">🔵 In Progress</span>
+    : null;
+
   if (viewMode === 'list') {
     return (
-      <div className={`glass-card px-5 py-4 flex items-center gap-4 hover:bg-white/8 transition-all duration-200 animate-slide-up ${isCompleted ? 'opacity-50' : 'task-card-pending'}`}>
+      <div className={`glass-card px-5 py-4 flex items-center gap-4 hover:bg-black/3 dark:hover:bg-white/8 transition-all duration-200 animate-slide-up ${isCompleted ? 'opacity-50' : isInProgress ? 'task-card-inprogress' : 'task-card-pending'}`}>
         <button onClick={() => onToggle(task)} className="flex-shrink-0 transition-transform hover:scale-110">
           {isCompleted
             ? <CheckCircle2 size={22} className="text-emerald-400" />
-            : <Circle size={22} className="text-gray-600 hover:text-violet-400 transition-colors" />}
+            : isInProgress
+            ? <Circle size={22} className="text-blue-400" />
+            : <Circle size={22} className="text-gray-400 dark:text-gray-600 hover:text-violet-500 transition-colors" />}
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`font-semibold text-white truncate ${isCompleted ? 'line-through text-gray-600' : ''}`}>{task.title}</span>
+            <span className={`font-semibold text-gray-900 dark:text-white truncate ${isCompleted ? 'line-through text-gray-400' : ''}`}>{task.title}</span>
             <span className={p.cls}>{p.label}</span>
+            {statusBadge}
           </div>
           {task.description && <p className="text-sm text-gray-500 truncate mt-0.5">{task.description}</p>}
         </div>
@@ -50,18 +60,15 @@ export default function TaskCard({ task, viewMode, onEdit, onDelete, onToggle, o
   }
 
   return (
-    <div
-      className={`glass-card p-5 flex flex-col gap-3 transition-all duration-300 animate-slide-up group cursor-default relative overflow-hidden ${isCompleted ? 'opacity-50 task-card-completed' : 'task-card-pending hover:bg-white/8'}`}
-      style={{ '--glow': p.glow }}
-    >
+    <div className={`glass-card p-5 flex flex-col gap-3 transition-all duration-300 animate-slide-up group cursor-default relative overflow-hidden ${isCompleted ? 'opacity-50 task-card-completed' : isInProgress ? 'task-card-inprogress hover:bg-black/3 dark:hover:bg-white/8' : 'task-card-pending hover:bg-black/3 dark:hover:bg-white/8'}`}>
       {/* Priority bar */}
       <div className={`absolute top-0 left-0 right-0 h-0.5 ${p.bar} opacity-60`} />
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2 flex-wrap">
           <span className={p.cls}><Flag size={10} /> {p.label}</span>
-          {isCompleted && <span className="status-completed">Done</span>}
-          {isOverdue && <span className="badge bg-red-500/15 text-red-400 border border-red-500/20">Overdue</span>}
+          {statusBadge}
+          {isOverdue && <span className="badge bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20">Overdue</span>}
         </div>
         <div className="relative">
           <button onClick={() => setMenuOpen(m => !m)} className="w-7 h-7 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-all">
@@ -84,20 +91,22 @@ export default function TaskCard({ task, viewMode, onEdit, onDelete, onToggle, o
       </div>
 
       <div>
-        <h3 className={`font-bold text-white leading-snug mb-1 ${isCompleted ? 'line-through text-gray-600' : ''}`}>{task.title}</h3>
+        <h3 className={`font-bold text-gray-900 dark:text-white leading-snug mb-1 ${isCompleted ? 'line-through text-gray-400' : ''}`}>{task.title}</h3>
         {task.description && <p className="text-sm text-gray-500 line-clamp-2">{task.description}</p>}
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-auto">
+      <div className="flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/5 mt-auto">
         {task.dueDate ? (
-          <div className={`flex items-center gap-1.5 text-xs font-medium ${isOverdue ? 'text-red-400' : 'text-gray-500'}`}>
+          <div className={`flex items-center gap-1.5 text-xs font-medium ${isOverdue ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'}`}>
             <Calendar size={11} /> {formatDate(task.dueDate)}
           </div>
         ) : <span />}
         <button onClick={() => onToggle(task)} className="flex items-center gap-1.5 text-xs font-semibold transition-all hover:scale-105">
           {isCompleted
-            ? <><CheckCircle2 size={14} className="text-emerald-400" /><span className="text-emerald-400">Completed</span></>
-            : <><Circle size={14} className="text-gray-600" /><span className="text-gray-500 hover:text-violet-400">Mark done</span></>}
+            ? <><CheckCircle2 size={14} className="text-emerald-400" /><span className="text-emerald-500">Completed</span></>
+            : isInProgress
+            ? <><Circle size={14} className="text-blue-400" /><span className="text-blue-500 hover:text-blue-400">In Progress</span></>
+            : <><Circle size={14} className="text-gray-400" /><span className="text-gray-400 hover:text-violet-500">Mark done</span></>}
         </button>
       </div>
     </div>

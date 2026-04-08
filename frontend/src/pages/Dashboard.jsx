@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -9,10 +10,10 @@ import StatsBar from '../components/StatsBar';
 import PomodoroTimer from '../components/PomodoroTimer';
 import {
   LogOut, Plus, Search, Zap, LayoutGrid, List,
-  Columns, ChevronDown, Keyboard, X
+  Columns, ChevronDown, Keyboard, X, Sun, Moon
 } from 'lucide-react';
 
-const FILTERS = ['all', 'pending', 'completed'];
+const FILTERS = ['all', 'pending', 'in-progress', 'completed'];
 const PRIORITIES = ['all', 'high', 'medium', 'low'];
 const VIEWS = [
   { id: 'grid', icon: LayoutGrid, label: 'Grid' },
@@ -31,6 +32,7 @@ const greet = () => {
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const { dark, toggle: toggleTheme } = useTheme();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -114,6 +116,7 @@ export default function Dashboard() {
     total: tasks.length,
     completed: tasks.filter(t => t.status === 'completed').length,
     pending: tasks.filter(t => t.status === 'pending').length,
+    inProgress: tasks.filter(t => t.status === 'in-progress').length,
     high: tasks.filter(t => t.priority === 'high').length,
   };
 
@@ -127,16 +130,16 @@ export default function Dashboard() {
 
   // Kanban columns
   const kanbanCols = [
-    { id: 'pending', label: '⏳ Pending', color: 'border-amber-500/30', tasks: sortedTasks.filter(t => t.status === 'pending' && t.priority === 'high') },
-    { id: 'medium', label: '🔵 In Progress', color: 'border-blue-500/30', tasks: sortedTasks.filter(t => t.status === 'pending' && t.priority !== 'high') },
-    { id: 'completed', label: '✅ Done', color: 'border-emerald-500/30', tasks: sortedTasks.filter(t => t.status === 'completed') },
+    { id: 'pending',     label: '⏳ Pending',     color: 'border-amber-500/30', tasks: sortedTasks.filter(t => t.status === 'pending') },
+    { id: 'in-progress', label: '🔵 In Progress', color: 'border-blue-500/30',  tasks: sortedTasks.filter(t => t.status === 'in-progress') },
+    { id: 'completed',   label: '✅ Done',         color: 'border-emerald-500/30', tasks: sortedTasks.filter(t => t.status === 'completed') },
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]" style={{ backgroundImage: 'radial-gradient(ellipse 100% 40% at 50% 0%, rgba(120,80,255,0.12), transparent)' }}>
+    <div className="min-h-screen bg-[#f8f7ff] dark:bg-[#0a0a0f]" style={{ backgroundImage: 'radial-gradient(ellipse 100% 40% at 50% 0%, rgba(120,80,255,0.08), transparent)' }}>
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-30 border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-30 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-violet-500/30">
@@ -147,16 +150,19 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowShortcuts(true)} className="hidden sm:flex w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 items-center justify-center text-gray-500 hover:text-white transition-colors" title="Keyboard shortcuts (?)">
+            <button onClick={() => setShowShortcuts(true)} className="hidden sm:flex w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors" title="Keyboard shortcuts (?)">
               <Keyboard size={15} />
             </button>
-            <div className="flex items-center gap-2 bg-white/5 rounded-full px-3 py-1.5 border border-white/5">
+            <button onClick={toggleTheme} className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all" title="Toggle theme">
+              {dark ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+            <div className="flex items-center gap-2 bg-black/5 dark:bg-white/5 rounded-full px-3 py-1.5 border border-black/5 dark:border-white/5">
               <div className="w-5 h-5 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white text-xs font-black">
                 {user?.name?.[0]?.toUpperCase()}
               </div>
-              <span className="hidden sm:block text-sm font-medium text-gray-300">{user?.name?.split(' ')[0]}</span>
+              <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name?.split(' ')[0]}</span>
             </div>
-            <button onClick={logout} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500/10 flex items-center justify-center text-gray-500 hover:text-red-400 transition-all" title="Logout">
+            <button onClick={logout} className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-red-500/10 flex items-center justify-center text-gray-500 hover:text-red-500 transition-all" title="Logout">
               <LogOut size={15} />
             </button>
           </div>
@@ -168,8 +174,8 @@ export default function Dashboard() {
         {/* Hero header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <p className="text-gray-500 text-sm font-medium mb-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            <h1 className="text-3xl font-black text-white">
+            <p className="text-gray-500 dark:text-gray-500 text-sm font-medium mb-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            <h1 className="text-3xl font-black text-gray-900 dark:text-white">
               {greet()}, <span className="gradient-text">{user?.name?.split(' ')[0]}</span> 👋
             </h1>
             <p className="text-gray-500 text-sm mt-1">
@@ -200,20 +206,20 @@ export default function Dashboard() {
 
           <div className="flex gap-2 flex-wrap">
             {/* Status filter */}
-            <div className="flex bg-white/5 border border-white/8 rounded-xl overflow-hidden">
+            <div className="flex bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 rounded-xl overflow-hidden">
               {FILTERS.map(f => (
                 <button key={f} onClick={() => setStatusFilter(f)}
-                  className={`px-3 py-2 text-xs font-semibold capitalize transition-all ${statusFilter === f ? 'bg-violet-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>
-                  {f}
+                  className={`px-3 py-2 text-xs font-semibold capitalize transition-all ${statusFilter === f ? 'bg-violet-600 text-white' : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}>
+                  {f === 'in-progress' ? 'In Progress' : f}
                 </button>
               ))}
             </div>
 
             {/* Priority filter */}
-            <div className="flex bg-white/5 border border-white/8 rounded-xl overflow-hidden">
+            <div className="flex bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 rounded-xl overflow-hidden">
               {PRIORITIES.map(p => (
                 <button key={p} onClick={() => setPriorityFilter(p)}
-                  className={`px-3 py-2 text-xs font-semibold capitalize transition-all ${priorityFilter === p ? 'bg-violet-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>
+                  className={`px-3 py-2 text-xs font-semibold capitalize transition-all ${priorityFilter === p ? 'bg-violet-600 text-white' : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`}>
                   {p}
                 </button>
               ))}
@@ -222,7 +228,7 @@ export default function Dashboard() {
             {/* Sort */}
             <div className="relative">
               <select value={sortBy} onChange={e => setSortBy(e.target.value)}
-                className="appearance-none bg-white/5 border border-white/8 rounded-xl px-3 pr-7 py-2 text-xs font-semibold text-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500/50 cursor-pointer">
+                className="appearance-none bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 rounded-xl px-3 pr-7 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-1 focus:ring-violet-500/50 cursor-pointer">
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
                 <option value="priority">Priority</option>
@@ -232,7 +238,7 @@ export default function Dashboard() {
             </div>
 
             {/* View toggle */}
-            <div className="flex bg-white/5 border border-white/8 rounded-xl overflow-hidden">
+            <div className="flex bg-black/5 dark:bg-white/5 border border-black/8 dark:border-white/8 rounded-xl overflow-hidden">
               {VIEWS.map(({ id, icon: Icon, label }) => (
                 <button key={id} onClick={() => setViewMode(id)} title={`${label} (${VIEWS.findIndex(v => v.id === id) + 1})`}
                   className={`px-3 py-2 transition-all ${viewMode === id ? 'bg-violet-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>
@@ -246,7 +252,7 @@ export default function Dashboard() {
         {/* Task count */}
         {!loading && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-600 font-medium">{sortedTasks.length} task{sortedTasks.length !== 1 ? 's' : ''}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-600 font-medium">{sortedTasks.length} task{sortedTasks.length !== 1 ? 's' : ''}</span>
             {(search || statusFilter !== 'all' || priorityFilter !== 'all') && (
               <button onClick={() => { setSearch(''); setStatusFilter('all'); setPriorityFilter('all'); }}
                 className="text-xs text-violet-400 hover:text-violet-300 transition-colors">
@@ -268,7 +274,7 @@ export default function Dashboard() {
             <div className="w-20 h-20 bg-violet-500/10 rounded-2xl flex items-center justify-center mb-5 animate-float">
               <Zap size={32} className="text-violet-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               {search ? 'No tasks found' : 'No tasks yet'}
             </h3>
             <p className="text-gray-500 text-sm mb-6 max-w-xs">
@@ -285,8 +291,8 @@ export default function Dashboard() {
             {kanbanCols.map(col => (
               <div key={col.id} className={`glass-card p-4 border ${col.color} kanban-col`}>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white">{col.label}</h3>
-                  <span className="text-xs bg-white/5 text-gray-400 px-2 py-0.5 rounded-full">{col.tasks.length}</span>
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white">{col.label}</h3>
+                  <span className="text-xs bg-black/5 dark:bg-white/5 text-gray-500 px-2 py-0.5 rounded-full">{col.tasks.length}</span>
                 </div>
                 <div className="space-y-3">
                   {col.tasks.map(task => (
@@ -317,14 +323,14 @@ export default function Dashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={() => setShowShortcuts(false)}>
           <div className="glass-card p-6 w-full max-w-sm animate-scale-in" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-white flex items-center gap-2"><Keyboard size={16} className="text-violet-400" /> Shortcuts</h3>
-              <button onClick={() => setShowShortcuts(false)} className="text-gray-500 hover:text-white"><X size={16} /></button>
+              <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2"><Keyboard size={16} className="text-violet-400" /> Shortcuts</h3>
+              <button onClick={() => setShowShortcuts(false)} className="text-gray-400 hover:text-gray-900 dark:hover:text-white"><X size={16} /></button>
             </div>
             <div className="space-y-2">
               {[['N', 'New task'], ['1', 'Grid view'], ['2', 'List view'], ['3', 'Board view'], ['?', 'Show shortcuts'], ['Esc', 'Close modal']].map(([key, desc]) => (
                 <div key={key} className="flex items-center justify-between py-1.5">
-                  <span className="text-sm text-gray-400">{desc}</span>
-                  <kbd className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-lg font-mono border border-white/10">{key}</kbd>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{desc}</span>
+                  <kbd className="text-xs bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg font-mono border border-black/8 dark:border-white/10">{key}</kbd>
                 </div>
               ))}
             </div>
